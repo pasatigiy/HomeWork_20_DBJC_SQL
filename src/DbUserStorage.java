@@ -347,22 +347,22 @@ public class DbUserStorage {
         return Optional.empty();
 
     }
-    public boolean exist (User user){
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "reenGU8zcnAl");
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        try {
-            Statement statement = connection.createStatement();
-            boolean execute = statement.execute();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-
-
-
-
-    }
+//    public boolean exist (User user){
+//        Connection connection = null;
+//        try {
+//            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "reenGU8zcnAl");
+//        } catch (SQLException throwables) {
+//            throwables.printStackTrace();
+//        }
+//        try {
+//            Statement statement = connection.createStatement();
+//            boolean execute = statement.execute();
+//        } catch (SQLException throwables) {
+//            throwables.printStackTrace();
+//        }
+//
+//
+//
+//
+//    }
 }
