@@ -31,6 +31,9 @@ public class DbUserStorage {
 
 //        dbUserStorage.getAll();
 //        System.out.println(dbUserStorage.getAllByName("Maxim"));
+
+        dbUserStorage.exist(new User(15, "Maxim", "Max", "Password",
+                new Address(10, "Kupaly"), new TelNumbers(1, "+375297777777")));
     }
 
     public void save(User user) {
@@ -302,7 +305,7 @@ public class DbUserStorage {
         return Optional.empty();
     }
 
-    public Optional<List<User>> getAllByStreet (String street){
+    public Optional<List<User>> getAllByStreet(String street) {
         Connection connection = null;
         try {
             connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "reenGU8zcnAl");
@@ -347,22 +350,90 @@ public class DbUserStorage {
         return Optional.empty();
 
     }
-//    public boolean exist (User user){
-//        Connection connection = null;
-//        try {
-//            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "reenGU8zcnAl");
-//        } catch (SQLException throwables) {
-//            throwables.printStackTrace();
-//        }
-//        try {
-//            Statement statement = connection.createStatement();
-//            boolean execute = statement.execute();
-//        } catch (SQLException throwables) {
-//            throwables.printStackTrace();
-//        }
-//
-//
-//
-//
-//    }
+
+    public boolean exist(User user) {
+        Connection connection = null;
+        try {
+            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "reenGU8zcnAl");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        try {
+            Statement statement = connection.createStatement();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        PreparedStatement preparedStatement = null;
+        try {
+            preparedStatement = connection.prepareStatement("select * from users u\n" +
+                    "join user_address_tel uat on u.id = uat.user_id\n" +
+                    "join addresses a on uat.address_id = a.id\n" +
+                    "join telephones t on uat.tel_id = t.id\n" +
+                    "where u.id = ? and  name = ? and username = ? and password = ? and a.id = ?\n" +
+                    "  and street = ? and t.id = ? and \"TelNumber\" = ?");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+
+            try {
+                preparedStatement.setInt(1, user.getId());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                preparedStatement.setString(2, user.getName());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                preparedStatement.setString(3, user.getUsername());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                preparedStatement.setString(4, user.getPassword());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                preparedStatement.setInt(5, user.getAddress().getIdAddress());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                preparedStatement.setString(6, user.getAddress().getStreet());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                preparedStatement.setInt(7, user.getTelNumbers().getTelId());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                preparedStatement.setString(8, user.getTelNumbers().getTelNum());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            ResultSet resultSet = null;
+            try {
+                resultSet = preparedStatement.executeQuery();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                resultSet.next();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        }
+        try {
+            return preparedStatement.execute();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return false;
+
+    }
 }
